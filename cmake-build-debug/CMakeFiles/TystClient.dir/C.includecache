@@ -6,7 +6,23 @@
 
 #IncludeRegexTransform: 
 
-/Users/john.blaberg/Desktop/TystChat/TystClient/main.c
+/Users/Herman/Desktop/Projects/TystClient/main.c
 stdio.h
+-
+stdlib.h
+-
+string.h
+-
+unistd.h
+-
+sys/types.h
+-
+sys/socket.h
+-
+netinet/in.h
+-
+pthread.h
+-
+signal.h
 -
 
