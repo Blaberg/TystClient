@@ -41,6 +41,8 @@
 *.su
 *.idb
 *.pdb
+cmake-build-debug
+CMakeLists.txt
 
 # Kernel Module Compile Results
 *.mod*
@@ -52,4 +54,4 @@ Mkfile.old
 dkms.conf
 
 # IDEA files
-.idea
+.idea/
