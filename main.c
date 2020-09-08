@@ -9,6 +9,7 @@
 #include <netinet/in.h>        //Internet Protocol family sockaddr_in defined here
 #include <pthread.h>        // for the cosy POSIX threads
 #include <signal.h>        //for ctrl+c signal
+#include <arpa/inet.h>
 
 #define MYPORT 2012    /* default  port number */
 #define MAXDATALEN 256
