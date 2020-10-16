@@ -17,9 +17,11 @@ int main(int argc, char *argv[])
 {
     int fd = 0;
     char buff[1024];
+    char username[10];
 
-    //Setup Buffer Array
+    //Setup Buffer Array and Username
     memset(buff, '0',sizeof(buff));
+    memset(username, '0',sizeof(username));
 
     //Create Socket
     fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -52,13 +54,23 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    while(1)
-    {
-        printf("Please enter the message: ");
+    printf("Enter your Username: ");
+    bzero(username,10);
+    fgets(username,10,stdin);
+
+    for(int i = 0; i < strlen(username); i++) {
+        if (username[i] == '\n')
+            username[i] = '\0';
+    }
+
+    send(fd,username,strlen(username),0);
+
+    while(1){
+        printf("%s> ",username);
         bzero(buff,256);
         fgets(buff,255,stdin);
 
-        printf("\nSending to SERVER: %s ",buff);
+       // printf("\nSending to SERVER: %s ",buff);
 
         /* Send message to the server */
         in = send(fd,buff,strlen(buff),0);
