@@ -1,41 +1,83 @@
-/***CLIENT CODE*/
+/*
+=======================================================
+CHAT APPLICATION IN C: CLIENT
+Author: RUCHIR SHARMA
+Email ID: ruchir.sharma@students.iiit.ac.in
+=======================================================
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>        //for string operations
-#include <unistd.h>        //NULL constant defined here
+#include <sys/socket.h>
 #include <sys/types.h>
-#include <sys/socket.h>        //for sockets
-#include <netinet/in.h>        //Internet Protocol family sockaddr_in defined here
-#include <pthread.h>        // for the cosy POSIX threads
-#include <signal.h>        //for ctrl+c signal
-#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+int main(int argc, char *argv[])
+{
+    int fd = 0;
+    char buff[1024];
 
-#define MYPORT 2012    /* default  port number */
-#define MAXDATALEN 256
+    //Setup Buffer Array
+    memset(buff, '0',sizeof(buff));
 
-
-struct sockaddr_in serv; //This is our main socket variable.
-int fd; //This is the socket file descriptor that will be used to identify the socket
-int conn; //This is the connection file descriptor that will be used to distinguish client connections.
-char message[100] = ""; //This array will store the messages that are sent by the server
-
-/***************main starts************/
-
-int main(int argc, char *argv[]){
+    //Create Socket
     fd = socket(AF_INET, SOCK_STREAM, 0);
-    serv.sin_family = AF_INET;
-    serv.sin_port = htons(8096);
-    inet_pton(AF_INET, "127.0.0.1", &serv.sin_addr); //This binds the client to localhost
-    connect(fd, (struct sockaddr *)&serv, sizeof(serv)); //This connects the client to the server.
-    while(1) {
-        printf("Enter a message: ");
-        fgets(message, 100, stdin);
-        send(fd, message, strlen(message), 0);
-        //An extra breaking condition can be added here (to terminate the while loop)
+    if(fd<0)
+    {
+        perror("Client Error: Socket not created succesfully");
+        return 0;
     }
 
+    //Structure to store details
+    struct sockaddr_in server;
+    memset(&server, '0', sizeof(server));
+
+    //Initialize
+    server.sin_family = AF_INET;
+    server.sin_port =  htons(8096);
+
+    int in = inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
+    if(in<0)
+    {
+        perror("Client Error: IP not initialized succesfully");
+        return 0;
+    }
+
+    //Connect to given server
+    in = connect(fd, (struct sockaddr *)&server, sizeof(server));
+    if(in<0)
+    {
+        perror("Client Error: Connection Failed.");
+        return 0;
+    }
+
+    while(1)
+    {
+        printf("Please enter the message: ");
+        bzero(buff,256);
+        fgets(buff,255,stdin);
+
+        printf("\nSending to SERVER: %s ",buff);
+
+        /* Send message to the server */
+        in = send(fd,buff,strlen(buff),0);
+        if (in < 0)
+        {
+            perror("\nClient Error: Writing to Server");
+            return 0;
+        }
+
+        /* Now read server response */
+        bzero(buff,256);
+        in = recv(fd,buff,255,0);
+        if (in < 0)
+        {
+            perror("\nClient Error: Reading from Server");
+            return 0;
+        }
+        printf("\nReceived FROM SERVER: %s ",buff);
+    }
+    close(fd);
+    return 0;
 }
-
-
-/*=================================================================*/
